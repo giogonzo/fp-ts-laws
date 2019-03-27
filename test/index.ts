@@ -5,12 +5,15 @@ import { monoidSum, monoidString } from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import { ordNumber } from 'fp-ts/lib/Ord'
 import { Semigroup } from 'fp-ts/lib/Semigroup'
-import { setoidNumber, setoidString } from 'fp-ts/lib/Setoid'
+import { setoidNumber, setoidString, Setoid } from 'fp-ts/lib/Setoid'
 import * as V from 'fp-ts/lib/Validation'
 import * as laws from '../src'
 import { getEither } from '../src/Either'
 import { getOption } from '../src/Option'
 import { getValidation } from '../src/Validation'
+import { setoidAsyncOf, setoidAsyncFromEquals } from '../src/laws'
+import * as T from 'fp-ts/lib/Task'
+import { sequenceT } from 'fp-ts/lib/Apply'
 
 describe('setoid', () => {
   it('should test Setoid laws', () => {
@@ -63,41 +66,53 @@ describe('ring', () => {
 // })
 
 describe('functor', () => {
-  it('should test Functor laws', () => {
-    laws.functor(O.option, getOption, O.getSetoid)
-    laws.functor(E.either, arb => getEither(fc.string(), arb), S => E.getSetoid(setoidString, S))
-    laws.functor(V.validation, arb => getValidation(fc.string(), arb), S => V.getSetoid(setoidString, S))
+  it('should test Functor laws', async () => {
+    await laws.functor(O.option, getOption, S => setoidAsyncOf(O.getSetoid(S)))
+    await laws.functor(E.either, arb => getEither(fc.string(), arb), S => setoidAsyncOf(E.getSetoid(setoidString, S)))
+    await laws.functor(
+      V.validation,
+      arb => getValidation(fc.string(), arb),
+      S => setoidAsyncOf(V.getSetoid(setoidString, S))
+    )
   })
 })
 
 describe('apply', () => {
-  it('should test Apply laws', () => {
-    laws.apply(O.option, getOption, O.getSetoid)
-    laws.apply(E.either, arb => getEither(fc.string(), arb), S => E.getSetoid(setoidString, S))
-    laws.apply(
+  it('should test Apply laws', async () => {
+    await laws.apply(O.option, getOption, S => setoidAsyncOf(O.getSetoid(S)))
+    await laws.apply(E.either, arb => getEither(fc.string(), arb), S => setoidAsyncOf(E.getSetoid(setoidString, S)))
+    await laws.apply(
       V.getApplicative(monoidString),
       arb => getValidation(fc.string(), arb),
-      S => V.getSetoid(setoidString, S)
+      S => setoidAsyncOf(V.getSetoid(setoidString, S))
     )
   })
 })
 
 describe('applicative', () => {
-  it('should test Applicative laws', () => {
-    laws.applicative(O.option, getOption, O.getSetoid)
-    laws.applicative(E.either, arb => getEither(fc.string(), arb), S => E.getSetoid(setoidString, S))
-    laws.applicative(
+  it('should test Applicative laws', async () => {
+    await laws.applicative(O.option, getOption, S => setoidAsyncOf(O.getSetoid(S)))
+    await laws.applicative(
+      E.either,
+      arb => getEither(fc.string(), arb),
+      S => setoidAsyncOf(E.getSetoid(setoidString, S))
+    )
+    await laws.applicative(
       V.getApplicative(monoidString),
       arb => getValidation(fc.string(), arb),
-      S => V.getSetoid(setoidString, S)
+      S => setoidAsyncOf(V.getSetoid(setoidString, S))
     )
   })
 })
 
+const liftSetoidTask = <A>(S: Setoid<A>) =>
+  setoidAsyncFromEquals((a: T.Task<A>, b: T.Task<A>) => sequenceT(T.task)(a, b).map(([a, b]) => S.equals(a, b)))
+
 describe('monad', () => {
-  it('should test Monad laws', () => {
-    laws.monad(O.option, O.getSetoid)
-    laws.monad(E.either, S => E.getSetoid(setoidString, S))
-    laws.monad(V.getMonad(monoidString), S => V.getSetoid(setoidString, S))
+  it('should test Monad laws', async () => {
+    await laws.monad(O.option, S => setoidAsyncOf(O.getSetoid(S)))
+    await laws.monad(E.either, S => setoidAsyncOf(E.getSetoid(setoidString, S)))
+    await laws.monad(V.getMonad(monoidString), S => setoidAsyncOf(V.getSetoid(setoidString, S)))
+    await laws.monad(T.task, liftSetoidTask)
   })
 })

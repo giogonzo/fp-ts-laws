@@ -32,36 +32,36 @@ Tests the `Applicative` laws
 export function applicative<F extends URIS3>(
   F: Applicative3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function applicative<F extends URIS3, U, L>(
   F: Applicative3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function applicative<F extends URIS2>(
   F: Applicative2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function applicative<F extends URIS2, L>(
   F: Applicative2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function applicative<F extends URIS>(
   F: Applicative1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function applicative<F>(
   F: Applicative<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void { ... }
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> { ... }
 ```
 
-Added in v0.0.2
+Added in v0.1.0
 
 # apply (function)
 
@@ -73,36 +73,36 @@ Tests the `Apply` laws
 export function apply<F extends URIS3>(
   F: Apply3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function apply<F extends URIS3, U, L>(
   F: Apply3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function apply<F extends URIS2>(
   F: Apply2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function apply<F extends URIS2, L>(
   F: Apply2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function apply<F extends URIS>(
   F: Apply1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function apply<F>(
   F: Apply<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void { ... }
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> { ... }
 ```
 
-Added in v0.0.2
+Added in v0.1.0
 
 # field (function)
 
@@ -126,36 +126,36 @@ Tests the `Functor` laws
 export function functor<F extends URIS3>(
   F: Functor3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function functor<F extends URIS3, U, L>(
   F: Functor3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function functor<F extends URIS2>(
   F: Functor2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function functor<F extends URIS2, L>(
   F: Functor2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function functor<F extends URIS>(
   F: Functor1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function functor<F>(
   F: Functor<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void { ... }
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> { ... }
 ```
 
-Added in v0.0.2
+Added in v0.1.0
 
 # monad (function)
 
@@ -166,22 +166,28 @@ Tests the `Monad` laws
 ```ts
 export function monad<M extends URIS3>(
   M: Monad3<M>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<M, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<M, any, any, A>>
+): Promise<void>
 export function monad<M extends URIS3, U, L>(
   M: Monad3C<M, U, L>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<M, any, any, A>>
-): void
-export function monad<M extends URIS2>(M: Monad2<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<M, any, A>>): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<M, any, any, A>>
+): Promise<void>
+export function monad<M extends URIS2>(
+  M: Monad2<M>,
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<M, any, A>>
+): Promise<void>
 export function monad<M extends URIS2, L>(
   M: Monad2C<M, L>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<M, L, A>>
-): void
-export function monad<M extends URIS>(M: Monad1<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<M, A>>): void
-export function monad<M>(M: Monad<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<M, A>>): void { ... }
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<M, L, A>>
+): Promise<void>
+export function monad<M extends URIS>(
+  M: Monad1<M>,
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<M, A>>
+): Promise<void>
+export function monad<M>(M: Monad<M>, liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<M, A>>): Promise<void> { ... }
 ```
 
-Added in v0.0.2
+Added in v0.1.0
 
 # monoid (function)
 

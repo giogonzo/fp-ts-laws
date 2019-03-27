@@ -131,204 +131,210 @@ export const field = <A>(F: Field<A>, S: Setoid<A>, arb: fc.Arbitrary<A>, seed?:
 
 /**
  * Tests the `Functor` laws
- * @since 0.0.2
+ * @since 0.1.0
  */
 export function functor<F extends URIS3>(
   F: Functor3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function functor<F extends URIS3, U, L>(
   F: Functor3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function functor<F extends URIS2>(
   F: Functor2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function functor<F extends URIS2, L>(
   F: Functor2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function functor<F extends URIS>(
   F: Functor1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function functor<F>(
   F: Functor<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void
-export function functor<F>(
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void>
+export async function functor<F>(
   F: Functor<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void {
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> {
   const arb = lift(fc.string())
   const Sa = liftSetoid(setoidString)
   const Sc = liftSetoid(setoidBoolean)
-  const identity = fc.property(arb, laws.functor.identity(F, Sa))
+  const identity = fc.asyncProperty(arb, arb => laws.functor.identity(F, Sa, arb).run())
   const ab: Function1<string, number> = s => s.length
   const bc: Function1<number, boolean> = n => n > 2
-  const composition = fc.property(arb, laws.functor.composition(F, Sc, ab, bc))
+  const composition = fc.asyncProperty(arb, arb => laws.functor.composition(F, Sc, ab, bc, arb).run())
 
-  fc.assert(identity)
-  fc.assert(composition)
+  await Promise.all([fc.assert(identity), fc.assert(composition)])
 }
 
 /**
  * Tests the `Apply` laws
- * @since 0.0.2
+ * @since 0.1.0
  */
 export function apply<F extends URIS3>(
   F: Apply3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function apply<F extends URIS3, U, L>(
   F: Apply3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function apply<F extends URIS2>(
   F: Apply2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function apply<F extends URIS2, L>(
   F: Apply2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function apply<F extends URIS>(
   F: Apply1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function apply<F>(
   F: Apply<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void
-export function apply<F>(
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void>
+export async function apply<F>(
   F: Apply<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void {
-  functor(F, lift, liftSetoid)
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> {
+  await functor(F, lift, liftSetoid)
 
   const Sc = liftSetoid(setoidBoolean)
   const arbFa = lift(fc.string())
   const arbFab = lift(fc.constant((a: string) => a.length))
   const arbFbc = lift(fc.constant((b: number) => b > 2))
-  const associativeComposition = fc.property(arbFa, arbFab, arbFbc, laws.apply.associativeComposition(F, Sc))
+  const associativeComposition = fc.asyncProperty(arbFa, arbFab, arbFbc, (fa, fab, fbc) =>
+    laws.apply.associativeComposition(F, Sc, fa, fab, fbc).run()
+  )
 
-  fc.assert(associativeComposition)
+  await fc.assert(associativeComposition)
 }
 
 /**
  * Tests the `Applicative` laws
- * @since 0.0.2
+ * @since 0.1.0
  */
 export function applicative<F extends URIS3>(
   F: Applicative3<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function applicative<F extends URIS3, U, L>(
   F: Applicative3C<F, U, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type3<F, any, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<F, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<F, any, any, A>>
+): Promise<void>
 export function applicative<F extends URIS2>(
   F: Applicative2<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function applicative<F extends URIS2, L>(
   F: Applicative2C<F, L>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type2<F, any, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<F, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<F, any, A>>
+): Promise<void>
 export function applicative<F extends URIS>(
   F: Applicative1<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<Type<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<F, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<F, A>>
+): Promise<void>
 export function applicative<F>(
   F: Applicative<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void
-export function applicative<F>(
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void>
+export async function applicative<F>(
   F: Applicative<F>,
   lift: <A>(a: fc.Arbitrary<A>) => fc.Arbitrary<HKT<F, A>>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<F, A>>
-): void {
-  apply(F, lift, liftSetoid)
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<F, A>>
+): Promise<void> {
+  await apply(F, lift, liftSetoid)
 
   const arbFa = lift(fc.string())
   const Sa = liftSetoid(setoidString)
   const Sb = liftSetoid(setoidNumber)
-  const identity = fc.property(arbFa, laws.applicative.identity(F, Sa))
+  const identity = fc.asyncProperty(arbFa, fa => laws.applicative.identity(F, Sa, fa).run())
   const ab: Function1<string, number> = a => a.length
-  const homomorphism = fc.property(fc.string(), laws.applicative.homomorphism(F, Sb, ab))
+  const homomorphism = fc.asyncProperty(fc.string(), a => laws.applicative.homomorphism(F, Sb, ab, a).run())
   const arbFab = lift(fc.constant(ab))
-  const interchange = fc.property(fc.string(), arbFab, laws.applicative.interchange(F, Sb))
-  const derivedMap = fc.property(arbFa, laws.applicative.derivedMap(F, Sb, ab))
+  const interchange = fc.asyncProperty(fc.string(), arbFab, (s, fab) =>
+    laws.applicative.interchange(F, Sb, s, fab).run()
+  )
+  const derivedMap = fc.asyncProperty(arbFa, fa => laws.applicative.derivedMap(F, Sb, ab, fa).run())
 
-  fc.assert(identity)
-  fc.assert(homomorphism)
-  fc.assert(interchange)
-  fc.assert(derivedMap)
+  await Promise.all([fc.assert(identity), fc.assert(homomorphism), fc.assert(interchange), fc.assert(derivedMap)])
 }
 
 /**
  * Tests the `Monad` laws
- * @since 0.0.2
+ * @since 0.1.0
  */
 export function monad<M extends URIS3>(
   M: Monad3<M>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<M, any, any, A>>
-): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<M, any, any, A>>
+): Promise<void>
 export function monad<M extends URIS3, U, L>(
   M: Monad3C<M, U, L>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type3<M, any, any, A>>
-): void
-export function monad<M extends URIS2>(M: Monad2<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<M, any, A>>): void
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type3<M, any, any, A>>
+): Promise<void>
+export function monad<M extends URIS2>(
+  M: Monad2<M>,
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<M, any, A>>
+): Promise<void>
 export function monad<M extends URIS2, L>(
   M: Monad2C<M, L>,
-  liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type2<M, L, A>>
-): void
-export function monad<M extends URIS>(M: Monad1<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<Type<M, A>>): void
-export function monad<M>(M: Monad<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<M, A>>): void
-export function monad<M>(M: Monad<M>, liftSetoid: <A>(Sa: Setoid<A>) => Setoid<HKT<M, A>>): void {
-  applicative(M, arb => arb.map(M.of), liftSetoid)
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type2<M, L, A>>
+): Promise<void>
+export function monad<M extends URIS>(
+  M: Monad1<M>,
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<Type<M, A>>
+): Promise<void>
+export function monad<M>(M: Monad<M>, liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<M, A>>): Promise<void>
+export async function monad<M>(
+  M: Monad<M>,
+  liftSetoid: <A>(Sa: Setoid<A>) => laws.SetoidAsync<HKT<M, A>>
+): Promise<void> {
+  await applicative(M, arb => arb.map(M.of), liftSetoid)
 
   const Sc = liftSetoid(setoidBoolean)
   const arbFa = fc.string().map(M.of)
   const afb: Function1<string, HKT<M, number>> = a => M.of(a.length)
   const bfc: Function1<number, HKT<M, boolean>> = b => M.of(b > 2)
-  const associativity = fc.property(arbFa, laws.chain.associativity(M, Sc, afb, bfc))
+  const associativity = fc.asyncProperty(arbFa, fa => laws.chain.associativity(M, Sc, afb, bfc, fa).run())
   const Sb = liftSetoid(setoidNumber)
   const fab: HKT<M, Function1<string, number>> = M.of((a: string) => a.length)
-  const derivedAp = fc.property(arbFa, laws.chain.derivedAp(M, Sb, fab))
+  const derivedAp = fc.asyncProperty(arbFa, fa => laws.chain.derivedAp(M, Sb, fab, fa).run())
 
-  fc.assert(associativity)
-  fc.assert(derivedAp)
+  await Promise.all([fc.assert(associativity), fc.assert(derivedAp)])
 
   const arb = fc.string().map(M.of)
   const Sa = liftSetoid(setoidString)
-  const leftIdentity = fc.property(fc.string(), laws.monad.leftIdentity(M, Sb, afb))
-  const rightIdentity = fc.property(arb, laws.monad.rightIdentity(M, Sa))
+  const leftIdentity = fc.asyncProperty(fc.string(), a => laws.monad.leftIdentity(M, Sb, afb, a).run())
+  const rightIdentity = fc.asyncProperty(arb, fa => laws.monad.rightIdentity(M, Sa, fa).run())
   const ab: Function1<string, number> = a => a.length
-  const derivedMap = fc.property(arb, laws.monad.derivedMap(M, Sb, ab))
+  const derivedMap = fc.asyncProperty(arb, fa => laws.monad.derivedMap(M, Sb, ab, fa).run())
 
-  fc.assert(leftIdentity)
-  fc.assert(rightIdentity)
-  fc.assert(derivedMap)
+  await Promise.all([fc.assert(leftIdentity), fc.assert(rightIdentity), fc.assert(derivedMap)])
 }

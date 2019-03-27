@@ -12,6 +12,7 @@ import { Monoid } from 'fp-ts/lib/Monoid'
 import { Semiring } from 'fp-ts/lib/Semiring'
 import { Ring } from 'fp-ts/lib/Ring'
 import { Field } from 'fp-ts/lib/Field'
+import { Task, task } from 'fp-ts/lib/Task'
 
 export const setoid = {
   reflexivity: <A>(S: Setoid<A>) => (a: A) => S.equals(a, a),
@@ -85,15 +86,28 @@ export const field = {
   }
 }
 
+export type SetoidAsync<A> = { equals: (a: A, b: A) => Task<boolean> }
+
+export const setoidAsyncOf: <A>(S: Setoid<A>) => SetoidAsync<A> = S => ({ equals: (a, b) => task.of(S.equals(a, b)) })
+export const setoidAsyncFromEquals: <A>(equals: (a: A, b: A) => Task<boolean>) => SetoidAsync<A> = equals => ({
+  equals
+})
+
 export const functor = {
-  identity: <F, A>(F: Functor<F>, S: Setoid<HKT<F, A>>) => (fa: HKT<F, A>) => S.equals(F.map(fa, a => a), fa),
-  composition: <F, A, B, C>(F: Functor<F>, S: Setoid<HKT<F, C>>, ab: Function1<A, B>, bc: Function1<B, C>) => (
+  identity: <F, A>(F: Functor<F>, S: SetoidAsync<HKT<F, A>>, fa: HKT<F, A>) => S.equals(F.map(fa, a => a), fa),
+  composition: <F, A, B, C>(
+    F: Functor<F>,
+    S: SetoidAsync<HKT<F, C>>,
+    ab: Function1<A, B>,
+    bc: Function1<B, C>,
     fa: HKT<F, A>
   ) => S.equals(F.map(fa, a => bc(ab(a))), F.map(F.map(fa, ab), bc))
 }
 
 export const apply = {
-  associativeComposition: <F, A, B, C>(F: Apply<F>, S: Setoid<HKT<F, C>>) => (
+  associativeComposition: <F, A, B, C>(
+    F: Apply<F>,
+    S: SetoidAsync<HKT<F, C>>,
     fa: HKT<F, A>,
     fab: HKT<F, Function1<A, B>>,
     fbc: HKT<F, Function1<B, C>>
@@ -105,31 +119,32 @@ export const apply = {
 }
 
 export const applicative = {
-  identity: <F, A>(F: Applicative<F>, S: Setoid<HKT<F, A>>) => (fa: HKT<F, A>) =>
+  identity: <F, A>(F: Applicative<F>, S: SetoidAsync<HKT<F, A>>, fa: HKT<F, A>) =>
     S.equals(F.ap(F.of((a: A) => a), fa), fa),
-  homomorphism: <F, A, B>(F: Applicative<F>, S: Setoid<HKT<F, B>>, ab: Function1<A, B>) => (a: A) =>
+  homomorphism: <F, A, B>(F: Applicative<F>, S: SetoidAsync<HKT<F, B>>, ab: Function1<A, B>, a: A) =>
     S.equals(F.ap(F.of(ab), F.of(a)), F.of(ab(a))),
-  interchange: <F, A, B>(F: Applicative<F>, S: Setoid<HKT<F, B>>) => (a: A, fab: HKT<F, Function1<A, B>>) =>
+  interchange: <F, A, B>(F: Applicative<F>, S: SetoidAsync<HKT<F, B>>, a: A, fab: HKT<F, Function1<A, B>>) =>
     S.equals(F.ap(fab, F.of(a)), F.ap(F.of((ab: Function1<A, B>) => ab(a)), fab)),
-  derivedMap: <F, A, B>(F: Applicative<F>, S: Setoid<HKT<F, B>>, ab: Function1<A, B>) => (fa: HKT<F, A>) =>
+  derivedMap: <F, A, B>(F: Applicative<F>, S: SetoidAsync<HKT<F, B>>, ab: Function1<A, B>, fa: HKT<F, A>) =>
     S.equals(F.map(fa, ab), F.ap(F.of(ab), fa))
 }
 
 export const chain = {
   associativity: <F, A, B, C>(
     F: Chain<F>,
-    S: Setoid<HKT<F, C>>,
+    S: SetoidAsync<HKT<F, C>>,
     afb: Function1<A, HKT<F, B>>,
-    bfc: Function1<B, HKT<F, C>>
-  ) => (fa: HKT<F, A>) => S.equals(F.chain(F.chain(fa, afb), bfc), F.chain(fa, a => F.chain(afb(a), bfc))),
-  derivedAp: <F, A, B>(F: Chain<F>, S: Setoid<HKT<F, B>>, fab: HKT<F, Function1<A, B>>) => (fa: HKT<F, A>) =>
+    bfc: Function1<B, HKT<F, C>>,
+    fa: HKT<F, A>
+  ) => S.equals(F.chain(F.chain(fa, afb), bfc), F.chain(fa, a => F.chain(afb(a), bfc))),
+  derivedAp: <F, A, B>(F: Chain<F>, S: SetoidAsync<HKT<F, B>>, fab: HKT<F, Function1<A, B>>, fa: HKT<F, A>) =>
     S.equals(F.ap(fab, fa), F.chain(fab, f => F.map(fa, f)))
 }
 
 export const monad = {
-  leftIdentity: <M, A, B>(M: Monad<M>, S: Setoid<HKT<M, B>>, afb: Function1<A, HKT<M, B>>) => (a: A) =>
+  leftIdentity: <M, A, B>(M: Monad<M>, S: SetoidAsync<HKT<M, B>>, afb: Function1<A, HKT<M, B>>, a: A) =>
     S.equals(M.chain(M.of(a), afb), afb(a)),
-  rightIdentity: <M, A>(M: Monad<M>, S: Setoid<HKT<M, A>>) => (fa: HKT<M, A>) => S.equals(M.chain(fa, M.of), fa),
-  derivedMap: <M, A, B>(M: Monad<M>, S: Setoid<HKT<M, B>>, ab: Function1<A, B>) => (fa: HKT<M, A>) =>
+  rightIdentity: <M, A>(M: Monad<M>, S: SetoidAsync<HKT<M, A>>, fa: HKT<M, A>) => S.equals(M.chain(fa, M.of), fa),
+  derivedMap: <M, A, B>(M: Monad<M>, S: SetoidAsync<HKT<M, B>>, ab: Function1<A, B>, fa: HKT<M, A>) =>
     S.equals(M.map(fa, ab), M.chain(fa, a => M.of(ab(a))))
 }
