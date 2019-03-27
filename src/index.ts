@@ -60,6 +60,19 @@ export const semigroup = <A>(S: Semigroup<A>, Eq: Setoid<A>, arb: fc.Arbitrary<A
 }
 
 /**
+ * Tests the `Semigroup` laws
+ * @since 0.0.4
+ */
+export const semigroupAsync = <A>(S: Semigroup<A>, Eq: laws.SetoidAsync<A>, arb: fc.Arbitrary<A>): Promise<void> => {
+  const associativity = fc.asyncProperty(arb, arb, arb, (a1, a2, a3) =>
+    laws.semigroupAsync
+      .associativity(S, Eq)(a1, a2, a3)
+      .run()
+  )
+  return fc.assert(associativity)
+}
+
+/**
  * Tests the `Monoid` laws
  * @since 0.0.1
  */

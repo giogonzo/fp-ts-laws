@@ -12,6 +12,9 @@ import { Monoid } from 'fp-ts/lib/Monoid'
 import { Semiring } from 'fp-ts/lib/Semiring'
 import { Ring } from 'fp-ts/lib/Ring'
 import { Field } from 'fp-ts/lib/Field'
+import { Task } from 'fp-ts/lib/Task';
+
+export interface SetoidAsync<A> { equals: (a: A, b: A) => Task<boolean> }
 
 export const setoid = {
   reflexivity: <A>(S: Setoid<A>) => (a: A) => S.equals(a, a),
@@ -30,6 +33,11 @@ export const ord = {
 
 export const semigroup = {
   associativity: <A>(S: Semigroup<A>, Eq: Setoid<A>) => (a: A, b: A, c: A) =>
+    Eq.equals(S.concat(S.concat(a, b), c), S.concat(a, S.concat(b, c)))
+}
+
+export const semigroupAsync = {
+  associativity: <A>(S: Semigroup<A>, Eq: SetoidAsync<A>) => (a: A, b: A, c: A) =>
     Eq.equals(S.concat(S.concat(a, b), c), S.concat(a, S.concat(b, c)))
 }
 
